@@ -1,7 +1,7 @@
 
 # Jogo de Xadrez 
 
-Este é um motor de jogo de xadrez totalmente jogável através do terminal (CLI), desenvolvido em Python. O projeto foi construído como critério avaliativo para a disciplina de **Engenharia de Software**, com foco prático no design de arquitetura de software orientada a objetos.
+Este é um jogo de xadrez jogável através do terminal, desenvolvido em Python. O projeto foi construído como critério avaliativo para a disciplina de **Engenharia de Software**, com foco prático no design de arquitetura de software orientada a objetos.
 
 O principal objetivo deste projeto é demonstrar a aplicação rigorosa dos princípios **SOLID** e de **Padrões de Projeto (Design Patterns)** para criar um código limpo, de fácil manutenção, testável e altamente extensível.
 
@@ -34,7 +34,7 @@ A arquitetura do projeto segue uma divisão modular clara e desacoplada, separan
 
 ## Como o Projeto foi Estruturado e Construído
 
-Para evitar que o motor de xadrez se transformasse em um emaranhado de condições aninhadas de difícil manutenção, o projeto foi arquitetado sob a filosofia de **atribuição estrita de responsabilidades**.
+O projeto foi arquitetado sob a filosofia de **atribuição estrita de responsabilidades**.
 
 ### 1. Aplicação dos Princípios SOLID
 
