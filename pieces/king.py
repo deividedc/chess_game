@@ -1,10 +1,16 @@
 from pieces.piece import Piece
 
+# O - Open/Closed Principle (Princípio Aberto/Fechado):
+# A classe King estende a classe abstrata Piece de forma modular. Conseguimos adicionar regras complexas 
+# e específicas do Rei sem a necessidade de alterar a estrutura base da superclasse Piece.
 class King(Piece):
     def __init__(self, color: str, position: tuple):
         # Define o símbolo: 'k' para pretas, 'K' para brancas
         symbol = 'k' if color == 'black' else 'K'
-        # O Rei começa com moved=False para viabilizar a lógica de Roque (Castling)
+        
+        # L - Liskov Substitution Principle (Princípio da Substituição de Liskov):
+        # O construtor preserva a assinatura e as propriedades contratuais exigidas pela superclasse.
+        # Qualquer parte do sistema que interaja com um objeto "Piece" genérico funcionará perfeitamente com King.
         super().__init__(color, 'King', symbol, position, False)
 
     def is_valid_move(self, new_position: tuple, board) -> bool:
@@ -13,6 +19,9 @@ class King(Piece):
         O Rei move-se exatamente uma casa em qualquer direção (horizontal, vertical ou diagonal)
         ou duas casas lateralmente no caso de um Roque válido.
         """
+        # L - Liskov Substitution Principle (Princípio da Substituição de Liskov):
+        # A assinatura do método e o retorno booleano cumprem exatamente a interface estipulada pela classe mãe,
+        # permitindo o polimorfismo puro durante as varreduras do jogo.
         curr_row, curr_col = self.position
         new_row, new_col = new_position
 
@@ -36,8 +45,8 @@ class King(Piece):
             if destination_piece is not None and destination_piece.color == self.color:
                 return False
             
-            # SRP: Delega ao Tabuleiro a verificação se a casa de destino está sob ataque.
-            # O Rei não pode se colocar em xeque de forma alguma.
+            # S (Responsabilidade Única): O Rei calcula sua própria geometria local de passo (delta <= 1),
+            # mas delega ao Tabuleiro (board) a responsabilidade de verificar se a casa final está sob ataque.
             if board.is_square_under_attack(new_position, self.color):
                 return False
 
@@ -49,11 +58,11 @@ class King(Piece):
         """
         Método auxiliar para validar os requisitos específicos do Roque.
         """
-        # Se o rei já se moveu, o roque é estritamente proibido
         if self.moved:
             return False
 
-        # O rei não pode fazer roque se estiver atualmente em xeque
+        # S & D (Inversão de Dependência): A validação do estado do jogo (saber se o rei está em xeque) 
+        # é enviada à abstração do tabuleiro recebida por parâmetro, evitando acoplamento rígido com estados globais.
         if board.is_square_under_attack(self.position, self.color):
             return False
 
@@ -77,12 +86,12 @@ class King(Piece):
         while col_check != rook_col:
             square = (curr_row, col_check)
             
-            # Caminho deve estar vazio
+            # S (Responsabilidade Única): O Rei sabe a regra do Roque, mas delega ao tabuleiro a busca
+            # pelas peças nas coordenadas intermediárias, mantendo-se focado apenas no seu papel de peça.
             if board.get_piece_at(square) is not None:
                 return False
             
             # O rei não pode passar por nenhuma casa que esteja sob ataque do adversário
-            # (Valida apenas as casas de trânsito do rei, ou seja, até a coluna de destino inclusive)
             if abs(col_check - curr_col) <= 2:
                 if board.is_square_under_attack(square, self.color):
                     return False

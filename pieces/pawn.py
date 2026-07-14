@@ -8,22 +8,29 @@ Created on Tue Jul 14 12:34:27 2026
 
 from pieces.piece import Piece
 
+# O - Open/Closed Principle (Princípio Aberto/Fechado):
+# A classe Pawn estende a classe abstrata Piece. As regras complexas e únicas do Peão (direção por cor, 
+# primeiro movimento duplo, En Passant) são encapsuladas aqui sem alterar a estrutura das outras peças.
 class Pawn(Piece):
     def __init__(self, color: str, position: tuple):
         # Define o símbolo: 'p' para pretas, 'P' para brancas
         symbol = 'p' if color == 'black' else 'P'
+        
+        # L - Liskov Substitution Principle (Princípio da Substituição de Liskov):
+        # Garante a conformidade com a superclasse Piece ao invocar o construtor padrão.
+        # Qualquer componente do sistema trata o Peão de forma polimórfica como uma peça comum.
         super().__init__(color, 'Pawn', symbol, position, False)
 
     def is_valid_move(self, new_position: tuple, board) -> bool:
         """
         Valida se o movimento do Peão é geometricamente correto de acordo com as regras do xadrez.
         """
+        # L - Liskov Substitution Principle (Princípio da Substituição de Liskov):
+        # Mantém estritamente a mesma assinatura de método e tipo de retorno esperado pela classe abstrata.
         curr_row, curr_col = self.position
         new_row, new_col = new_position
 
         # 1. Determina a direção do movimento baseada na cor do peão
-        # Brancas sobem o tabuleiro (diminuem o índice da linha)
-        # Pretas descem o tabuleiro (aumentam o índice da linha)
         direction = -1 if self.color == 'white' else 1
 
         delta_row = new_row - curr_row
@@ -35,12 +42,14 @@ class Pawn(Piece):
         if delta_col == 0:
             # Avanço de 1 casa
             if delta_row == direction:
-                # A casa da frente deve estar completamente vazia
+                # S (Responsabilidade Única): O Peão calcula a direção lógica do avanço,
+                # mas consulta o tabuleiro (board) para saber o estado de ocupação da casa.
                 return board.get_piece_at(new_position) is None
 
             # Avanço duplo de 2 casas (apenas no primeiro movimento)
             elif delta_row == 2 * direction and not self.moved:
-                # Ambas as casas (a intermediária e a de destino) devem estar vazias
+                # S: A peça conhece seu estado interno (self.moved), mas delega ao tabuleiro 
+                # a responsabilidade de inspecionar fisicamente o caminho intermediário na matriz.
                 intermediate_square = (curr_row + direction, curr_col)
                 return (board.get_piece_at(intermediate_square) is None and 
                         board.get_piece_at(new_position) is None)
@@ -58,9 +67,10 @@ class Pawn(Piece):
             # ==========================================
             # CASO C: CAPTURA EN PASSANT
             # ==========================================
-            # Se a casa de destino está vazia, o peão pode estar tentando capturar "En Passant".
-            # Quem valida as regras de En Passant é o Tabuleiro, pois precisamos saber se o
-            # peão adversário adjacente acabou de se mover 2 casas na última jogada da partida.
+            # S (Responsabilidade Única) & D (Inversão de Dependência): O Peão sabe que a diagonal vazia 
+            # pode significar um En Passant, mas ele NÃO rastreia o histórico de turnos do jogo. 
+            # Ele delega essa validação complexa à abstração do tabuleiro (`board.can_en_passant`), 
+            # mantendo uma única responsabilidade e evitando acoplamento rígido.
             if board.can_en_passant(self.position, new_position):
                 return True
 

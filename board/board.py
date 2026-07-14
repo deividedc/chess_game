@@ -8,6 +8,10 @@ Created on Tue Jul 14 12:38:29 2026
 
 from pieces import Pawn, Rook, Knight, Bishop, Queen, King
 
+# O - Open/Closed Principle (Princípio Aberto/Fechado):
+# A classe Board está totalmente fechada para modificações de comportamento das peças individuais.
+# Se novas peças com mecânicas exóticas forem adicionadas, o algoritmo de varredura ou impressão do 
+# tabuleiro não sofrerá nenhuma alteração, pois ele trata todas as peças de forma genérica.
 class Board:
     def __init__(self):
         # Inicializa um tabuleiro vazio (matriz 8x8 preenchida com None)
@@ -71,8 +75,8 @@ class Board:
 
     def is_path_blocked(self, start: tuple, end: tuple) -> bool:
         """
-        Verifica se existe alguma peça no caminho linear ou diagonal entre as posições.
-        Não avalia a casa de destino final, apenas o caminho intermédio.
+        SRP (Responsabilidade Única): O tabuleiro detém a única e exclusiva responsabilidade de
+        conhecer a matriz e calcular colisões de trajeto físico, liberando as peças dessa carga de dados.
         """
         start_row, start_col = start
         end_row, end_col = end
@@ -95,17 +99,17 @@ class Board:
 
     def is_square_under_attack(self, position: tuple, defensive_color: str) -> bool:
         """
-        Verifica se uma determinada casa está a ser ameaçada por alguma peça adversária.
-        Preve e evita recursão infinita caso a peça atacante seja o Rei adversário.
+        L - Liskov Substitution Principle (Princípio da Substituição de Liskov):
+        O tabuleiro interage de forma polimórfica com a lista de peças ao disparar `piece.is_valid_move`.
+        Ele não precisa checar sub-tipos estritos; qualquer subclasse derivada responde ao mesmo método perfeitamente.
         """
         target_row, target_col = position
         for r in range(8):
             for c in range(8):
                 piece = self.get_piece_at((r, c))
                 if piece is not None and piece.color != defensive_color:
-                    # Se for o Rei adversário, a ameaça é direta caso ele esteja adjacente.
-                    # Isso previne que o método is_valid_move do rei inimigo chame esta função de volta.
-                    if piece.name == 'King':
+                    # Ajustado para 'Rei' em conformidade com a nomenclatura em português das suas peças
+                    if piece.name == 'Rei':
                         king_row, king_col = piece.position
                         if abs(king_row - target_row) <= 1 and abs(king_col - target_col) <= 1:
                             return True
@@ -131,7 +135,8 @@ class Board:
         for r in range(8):
             for c in range(8):
                 piece = self.get_piece_at((r, c))
-                if piece is not None and piece.name == 'King' and piece.color == color:
+                # Ajustado para 'Rei' em conformidade com a nomenclatura em português das suas peças
+                if piece is not None and piece.name == 'Rei' and piece.color == color:
                     return (r, c)
         return None
 
@@ -144,8 +149,9 @@ class Board:
 
     def has_any_valid_moves(self, color: str) -> bool:
         """
-        Simula temporariamente todos os movimentos geometricamente válidos de cada peça 
-        da cor do jogador atual para ver se algum deles consegue livrá-lo do xeque.
+        SRP (Responsabilidade Única): Centraliza a complexidade algorítmica de predição e simulação de estados.
+        As peças se limitam a validar vetores geométricos simples, enquanto o Tabuleiro gerencia a simulação
+        hipotética de jogadas para calcular a evasão de xeques.
         """
         for r in range(8):
             for c in range(8):

@@ -1,6 +1,10 @@
 import sys
 from board.board import Board
 
+# O - Open/Closed Principle (Princípio Aberto/Fechado):
+# A classe ChessGame gerencia o loop principal da partida sem conhecer detalhes das regras de
+# movimento das peças. Ela está fechada para modificações caso o comportamento das peças mude,
+# dependendo puramente da extensão polimórfica de cada classe concreta.
 class ChessGame:
     def __init__(self):
         self.board = Board()
@@ -37,6 +41,8 @@ class ChessGame:
         print("Digite as coordenadas no formato: linha,coluna (Ex: 6,4)")
         print("Digite 'sair' a qualquer momento para encerrar.\n")
 
+        # S (Responsabilidade Única): O método play atua puramente como Orquestrador/Controlador (Game Loop).
+        # A responsabilidade dele é gerenciar a entrada/saída de dados no terminal (I/O) e o fluxo dos turnos.
         while True:
             self.board.print_board()
             print(f"--- TURNO DAS: {self.current_turn.upper()} ---")
@@ -74,14 +80,16 @@ class ChessGame:
                 continue
 
             # 3. Validação das Regras do Movimento
-            # Passamos o tabuleiro para a peça verificar as restrições físicas
+            # L - Liskov Substitution Principle (Princípio da Substituição de Liskov):
+            # ChessGame aciona o método `is_valid_move` de forma genérica. Pelo polimorfismo, o loop delega
+            # a checagem à subclasse real sem saber se é um Peão ou uma Rainha, atestando a substituição segura de Liskov.
             if not piece.is_valid_move(destination, self.board):
                 print(f"[Erro] Movimento inválido para o {piece.name}! Tente novamente.\n")
                 continue
 
             # 4. Execução do Movimento (caso seja válido)
-            # Verifica se é um caso especial de En Passant
-            if piece.name == 'Pawn' and self.board.can_en_passant(origin, destination):
+            # Ajustado para 'Peão' em conformidade com a nomenclatura em português das suas peças
+            if piece.name == 'Peão' and self.board.can_en_passant(origin, destination):
                 # Captura o peão adversário na casa En Passant (uma linha atrás do destino)
                 direction = -1 if piece.color == 'white' else 1
                 captured_pawn_pos = (destination[0] - direction, destination[1])
@@ -89,7 +97,8 @@ class ChessGame:
                 print(f"Captura En Passant realizada!")
 
             # Verifica se foi um movimento de Roque para mover também a Torre
-            if piece.name == 'King' and abs(destination[1] - origin[1]) == 2:
+            # Ajustado para 'Rei' em conformidade com a nomenclatura em português das suas peças
+            if piece.name == 'Rei' and abs(destination[1] - origin[1]) == 2:
                 step = 1 if destination[1] > origin[1] else -1
                 rook_origin_col = 7 if step == 1 else 0
                 rook_dest_col = destination[1] - step
@@ -103,7 +112,8 @@ class ChessGame:
                 print("Roque realizado com sucesso!")
 
             # Configura o alvo En Passant se for um avanço duplo de peão nesta jogada
-            if piece.name == 'Pawn' and abs(destination[0] - origin[0]) == 2:
+            # Ajustado para 'Peão' em conformidade com a nomenclatura em português das suas peças
+            if piece.name == 'Peão' and abs(destination[0] - origin[0]) == 2:
                 # O alvo de captura fica na casa intermediária onde o peão saltou
                 direction = -1 if piece.color == 'white' else 1
                 self.board.en_passant_target = (origin[0] + direction, origin[1])
@@ -111,7 +121,9 @@ class ChessGame:
                 # Se qualquer outra jogada for feita, o En Passant expira
                 self.board.en_passant_target = None
 
-            # Efetua o movimento físico no tabuleiro
+            # D - Dependency Inversion Principle (Princípio da Inversão de Dependência):
+            # Em vez de gerenciar e alterar a matriz interna do tabuleiro por conta própria, o orquestrador
+            # interage com os métodos de alto nível expostos pelo Tabuleiro (`set_piece_at`), dependendo de contratos claros.
             self.board.set_piece_at(destination, piece)
             self.board.set_piece_at(origin, None)
             

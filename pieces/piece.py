@@ -1,10 +1,14 @@
 from abc import ABC, abstractmethod
 
+# O - Open/Closed Principle (Princípio Aberto/Fechado):
+# A classe Piece foi criada usando a classe abstrata (ABC), definindo uma estrutura genérica rígida.
+# O núcleo do jogo está fechado para modificações, mas totalmente aberto para expansões: 
+# qualquer nova peça criada só precisa herdar de Piece.
 class Piece(ABC):
     # Dicionário de mapeamento de classe para renderizar os ícones reais
     _UNICODE_SYMBOLS = {
-        'K': '♚', 'Q': '♛', 'R': '♜', 'B': '♝', 'N': '♞', 'P': '♟',  # Peças Brancas (Preenchidas = Claras no console dark)
-        'k': '♔', 'q': '♕', 'r': '♖', 'b': '♗', 'n': '♘', 'p': '♙'   # Peças Pretas (Vazadas = Escuras no console dark)
+        'K': '♚', 'Q': '♛', 'R': '♜', 'B': '♝', 'N': '♞', 'P': '♟',  # Peças Brancas
+        'k': '♔', 'q': '♕', 'r': '♖', 'b': '♗', 'n': '♘', 'p': 'p'   # Peças Pretas
     }
 
     def __init__(self, color: str, name: str, symbol: str, position: tuple, moved: bool = False):
@@ -19,6 +23,10 @@ class Piece(ABC):
         # Se por algum motivo o símbolo não estiver no dicionário, ela mostra o caractere original.
         return self._UNICODE_SYMBOLS.get(self._symbol, self._symbol)
 
+    # L - Liskov Substitution Principle (Princípio da Substituição de Liskov):
+    # O uso do decorador @abstractmethod força todas as subclasses derivadas (Rei, Rainha, etc.)
+    # a implementarem obrigatoriamente este método seguindo a mesma assinatura. Isso garante que o motor
+    # do jogo possa chamar `is_valid_move` em qualquer peça de forma polimórfica e segura, sem quebras.
     @abstractmethod
     def is_valid_move(self, new_position: tuple, board) -> bool:
         pass
@@ -27,6 +35,9 @@ class Piece(ABC):
     # ENCAPSULAMENTO (Getters e Setters)
     # =========================================================================
 
+    # S (Responsabilidade Única): A classe Piece detém a única responsabilidade de encapsular 
+    # as propriedades fundamentais do estado de uma peça genérica (cor, nome, posição, se moveu).
+    # Ela não interfere na matriz do tabuleiro e não decide mecânicas externas do jogo.
     @property
     def color(self) -> str:
         return self._color
