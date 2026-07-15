@@ -16,7 +16,7 @@ class Board:
     def __init__(self):
         # Inicializa um tabuleiro vazio (matriz 8x8 preenchida com None)
         self._grid = [[None for _ in range(8)] for _ in range(8)]
-        # Registo para a lógica de En Passant (guarda a coordenada do peão que deu o salto duplo)
+        # Registo para a lógica de En Passant (guarda a coordenada do Roo` que deu o salto duplo)
         self.en_passant_target = None
         # Configura as peças nas suas posições iniciais
         self.initial_setup()

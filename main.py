@@ -88,8 +88,7 @@ class ChessGame:
                 continue
 
             # 4. Execução do Movimento (caso seja válido)
-            # Ajustado para 'Peão' em conformidade com a nomenclatura em português das suas peças
-            if piece.name == 'Peão' and self.board.can_en_passant(origin, destination):
+            if piece.name == 'Pawn' and self.board.can_en_passant(origin, destination):
                 # Captura o peão adversário na casa En Passant (uma linha atrás do destino)
                 direction = -1 if piece.color == 'white' else 1
                 captured_pawn_pos = (destination[0] - direction, destination[1])
@@ -113,7 +112,7 @@ class ChessGame:
 
             # Configura o alvo En Passant se for um avanço duplo de peão nesta jogada
             # Ajustado para 'Peão' em conformidade com a nomenclatura em português das suas peças
-            if piece.name == 'Peão' and abs(destination[0] - origin[0]) == 2:
+            if piece.name == 'Pawn' and abs(destination[0] - origin[0]) == 2:
                 # O alvo de captura fica na casa intermediária onde o peão saltou
                 direction = -1 if piece.color == 'white' else 1
                 self.board.en_passant_target = (origin[0] + direction, origin[1])
