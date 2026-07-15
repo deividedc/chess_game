@@ -36,7 +36,7 @@ class Board:
             if piece is not None:
                 piece.position = position
 
-    # Métodos mágicos para permitir a indexação direta: tabuleiro[linha, coluna]
+    # Métodos para permitir a indexação direta: tabuleiro[linha, coluna]
     def __getitem__(self, index):
         row, col = index
         return self.get_piece_at((row, col))
