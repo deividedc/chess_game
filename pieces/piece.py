@@ -8,7 +8,7 @@ class Piece(ABC):
     # Dicionário de mapeamento de classe para renderizar os ícones reais
     _UNICODE_SYMBOLS = {
         'K': '♚', 'Q': '♛', 'R': '♜', 'B': '♝', 'N': '♞', 'P': '♟',  # Peças Brancas
-        'k': '♔', 'q': '♕', 'r': '♖', 'b': '♗', 'n': '♘', 'p': 'p'   # Peças Pretas
+        'k': '♔', 'q': '♕', 'r': '♖', 'b': '♗', 'n': '♘', 'p': '♙'   # Peças Pretas
     }
 
     def __init__(self, color: str, name: str, symbol: str, position: tuple, moved: bool = False):

@@ -98,7 +98,7 @@ class ChessGame:
 
             # Verifica se foi um movimento de Roque para mover também a Torre
             # Ajustado para 'Rei' em conformidade com a nomenclatura em português das suas peças
-            if piece.name == 'Rei' and abs(destination[1] - origin[1]) == 2:
+            if piece.name == 'King' and abs(destination[1] - origin[1]) == 2:
                 step = 1 if destination[1] > origin[1] else -1
                 rook_origin_col = 7 if step == 1 else 0
                 rook_dest_col = destination[1] - step

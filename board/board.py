@@ -108,8 +108,7 @@ class Board:
             for c in range(8):
                 piece = self.get_piece_at((r, c))
                 if piece is not None and piece.color != defensive_color:
-                    # Ajustado para 'Rei' em conformidade com a nomenclatura em português das suas peças
-                    if piece.name == 'Rei':
+                    if piece.name == 'King':
                         king_row, king_col = piece.position
                         if abs(king_row - target_row) <= 1 and abs(king_col - target_col) <= 1:
                             return True
@@ -136,7 +135,7 @@ class Board:
             for c in range(8):
                 piece = self.get_piece_at((r, c))
                 # Ajustado para 'Rei' em conformidade com a nomenclatura em português das suas peças
-                if piece is not None and piece.name == 'Rei' and piece.color == color:
+                if piece is not None and piece.name == 'King' and piece.color == color:
                     return (r, c)
         return None
 
